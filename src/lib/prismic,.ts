@@ -1,6 +1,6 @@
 import Prismic from "prismic-javascript";
 
-export const apiEndpoint = "https://devcommercematheus.cdn.prismic.io/api/v2";
+export const apiEndpoint = process.env.NEXT_PUBLIC_API_PRISMIC_URL;
 
 export const client = (req = null) => {
   const options = req ? { req } : null;
