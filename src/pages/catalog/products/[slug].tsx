@@ -1,36 +1,52 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { client } from "~/lib/prismic,";
+import PrismicDOM from "prismic-dom";
+import { Document } from "prismic-javascript/types/documents";
+import { GetStaticPaths, GetStaticProps } from "next";
 
-import dynamic from "next/dynamic";
+interface ProductProps {
+  product: Document;
+}
 
-// Import dinâmico, isso serve para que somente esse componente
-//   seja importado quando for ser usado
-// `loading` é um elemento que mostra algo em tela enquanto
-//   o a importação não termina
-// `ssr` serve para que o node não tente importar esse arquivo
-//    somente o browser pode fazer isso. Isso pode acontecer pois
-//    pode haver funções que somente o browser suporta
-const AddToCartModal = dynamic(() => import("~/components/AddToCartModal"), {
-  loading: () => <p>Loading...</p>,
-  ssr: false,
-});
-
-export default function Product({}) {
+export default function Product({ product }: ProductProps) {
   const router = useRouter();
 
-  const [isAddToCartModalVisible, setIsAddToCartModalVisible] = useState(false);
-
-  function handleAddToCart() {
-    setIsAddToCartModalVisible(true);
+  if (router.isFallback) {
+    return <p>Carregando...</p>;
   }
 
   return (
     <div>
-      <h2>{router.query.slug}</h2>
+      <h1>{PrismicDOM.RichText.asText(product.data.title)}</h1>
 
-      <button onClick={handleAddToCart}>Add to cart</button>
+      <img src={product.data.thumbnail.url} width="400" />
+      <div
+        dangerouslySetInnerHTML={{
+          __html: PrismicDOM.RichText.asHtml(product.data.description),
+        }}
+      />
 
-      {isAddToCartModalVisible && <AddToCartModal />}
+      <p>Price: ${product.data.price}</p>
     </div>
   );
 }
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: true,
+  };
+};
+
+export const getStaticProps: GetStaticProps<ProductProps> = async context => {
+  const { slug } = context.params;
+
+  const product = await client().getByUID("product", String(slug), {});
+
+  return {
+    props: {
+      product,
+    },
+    revalidate: 15,
+  };
+};

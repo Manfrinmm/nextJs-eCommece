@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "next": "9.5.4",
+    "prismic-dom": "^2.2.4",
+    "prismic-javascript": "^3.0.2",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "styled-components": "^5.2.0"
