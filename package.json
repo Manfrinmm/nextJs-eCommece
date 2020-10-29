@@ -5,11 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "next-on-netlify",
     "start": "next start",
     "server": "npx json-server server.json -p 3333 -w"
   },
   "dependencies": {
     "next": "^10.0.0",
+    "next-on-netlify": "^2.6.0",
     "prismic-dom": "^2.2.4",
     "prismic-javascript": "^3.0.2",
     "react": "16.13.1",
